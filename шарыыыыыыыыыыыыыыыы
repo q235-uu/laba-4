@@ -1,0 +1,87 @@
+from random import randrange as rnd, choice
+from tkinter import *
+
+root = Tk()
+root.geometry('800x600')
+
+canv = Canvas(root, bg='white')
+l = Label(root, bg='white', fg='black', width=600,
+          text="Click")
+canv.pack(fill=BOTH, expand=1)
+l.pack()
+#
+colors = {'#DB7093', '#C71585', '#FF1493', '#FF69B4', '#FFB6C1', '#FFC0CB'}
+n_circ = 10
+count = 0
+#
+Empty_x = [i for i in range(n_circ)]
+Empty_y = [i for i in range(n_circ)]
+Empty_r = [i for i in range(n_circ)]
+Empty_clr = [i for i in range(n_circ)]
+Empty_dx = [i for i in range(n_circ)]
+Empty_dy = [i for i in range(n_circ)]
+Empty_circ = [i for i in range(n_circ)]
+[x, y, r, clr, dx, dy, circ] = [Empty_x, Empty_y, Empty_r,
+                                Empty_clr, Empty_dx, Empty_dy, Empty_circ]
+
+
+#
+def newest_ball():
+    global x, y, r, clr, speed, dx, dy, circ
+    assert isinstance(ALL, object)
+    canv.delete(ALL)
+    for i in range(n_circ):
+        x[i] = rnd(100, 700)
+        y[i] = rnd(100, 500)
+        dx[i] = (rnd(500) - 250) / 50
+        dy[i] = (rnd(500) - 250) / 50
+        r[i] = rnd(30, 50)
+        clr[i] = choice(colors)
+        assert isinstance(y, object)
+        circ[i] = canv.create_oval(x[i] - r[i], y[i] - r[i], x[i] + r[i],
+                                   y[i] + r[i], fill=clr[i], width=0)
+    root.after(100, update)
+
+
+def old_ball():
+    global x, y, r, circ, clr
+    for i in range(n_circ):
+        canv.delete(circ[i])
+        assert isinstance(x, object)
+        circ[i] = canv.create_oval(x[i] - r[i], y[i] - r[i],
+                                   x[i] + r[i], y[i] + r[i],
+                                   fill=clr[i], width=0)
+    root.after(int(100 / speed), update)
+
+
+def update():
+    global x, y, r, dx, dy
+    for i in range(n_circ):
+        while abs(x[i] + dx[i] - 400) >= 400 - r[i] or \
+                abs(y[i] + dy[i] - 300) >= 300 - r[i]:
+            dx[i] = (rnd(500) - 250) / 50
+            dy[i] = (rnd(500) - 250) / 50
+        x[i] += dx[i]
+        y[i] += dy[i]
+    old_ball()
+
+
+def click(event):
+    global count
+    x0 = event.x
+    y0 = event.y
+    count0 = count
+    for i in range(n_circ):
+        R2 = (x0 - x[i]) ** 2 + (y0 - y[i]) ** 2
+        if R2 <= r[i] ** 2:
+            count += 1
+    if count - count0 > 0:
+        l['text'] = str(count)
+    else:
+        l['text'] = str(count) + ' ' + 'Ha-ha, loser!'
+
+
+newest_ball()
+canv.bind('<Button-1>', click)
+mainloop()
+
